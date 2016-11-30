@@ -27,7 +27,7 @@
 #define IS_PROBE(...) SECOND(__VA_ARGS__, 0)
 #define PROBE() ~, 1
 
-#define CAT(a,b) a ## b
+#define CAT(a, b) a##b
 
 #define NOT(x) IS_PROBE(CAT(_NOT_, x))
 #define _NOT_0 PROBE()
@@ -38,7 +38,7 @@
 #define _IF_ELSE(condition) CAT(_IF_, condition)
 
 #define _IF_1(...) __VA_ARGS__ _IF_1_ELSE
-#define _IF_0(...)             _IF_0_ELSE
+#define _IF_0(...) _IF_0_ELSE
 
 #define _IF_1_ELSE(...)
 #define _IF_0_ELSE(...) __VA_ARGS__
@@ -46,16 +46,12 @@
 #define HAS_ARGS(...) BOOL(FIRST(_END_OF_ARGUMENTS_ __VA_ARGS__)())
 #define _END_OF_ARGUMENTS_() 0
 
-#define MAP(m, first, ...)           \
-  m(first)                           \
-  IF_ELSE(HAS_ARGS(__VA_ARGS__))(    \
-    DEFER4(_MAP)()(m, __VA_ARGS__)   \
-  )(                                 \
-    /* Do nothing, just terminate */ \
-  )
+#define MAP(m, first, ...)                                                                                 \
+  m(first) IF_ELSE(HAS_ARGS(__VA_ARGS__))(DEFER4(_MAP)()(m, __VA_ARGS__))(/* Do nothing, just terminate */ \
+                                                                          )
 #define _MAP() MAP
 
-#define MAP_LIST(m,first,...) m(first)IF_ELSE(HAS_ARGS(__VA_ARGS__))(,DEFER4(_MAP_LIST)()(m,__VA_ARGS__))()
+#define MAP_LIST(m, first, ...) m(first) IF_ELSE(HAS_ARGS(__VA_ARGS__))(, DEFER4(_MAP_LIST)()(m, __VA_ARGS__))()
 #define _MAP_LIST() MAP_LIST
 
 #endif

@@ -4,25 +4,27 @@
 #include <chrono>
 #include <iostream>
 
-struct
-Timer
-{
+struct Timer {
   using Timing = std::chrono::high_resolution_clock;
-  using Point = std::chrono::time_point <Timing>;
+  using Point = std::chrono::time_point<Timing>;
 
   Point begin;
 
   Timer()
-    : begin { Timing::now() }
-    { }
-
-  double current () {
-    Point end { Timing::now() };
-    return std::chrono::duration <double, std::milli> { end - begin }.count();
+    : begin{Timing::now()}
+  {
   }
 
-  ~Timer() { }
+  double
+  current()
+  {
+    Point end{Timing::now()};
+    return std::chrono::duration<double, std::milli>{end - begin}.count();
+  }
 
+  ~Timer()
+  {
+  }
 };
 
 #endif
