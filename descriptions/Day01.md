@@ -19,8 +19,6 @@ For example:
 
 *How many blocks away* is Easter Bunny HQ?
 
-Your puzzle answer was `298`.
-
 --- Part Two ---
 ----------------
 
@@ -29,13 +27,3 @@ Then, you notice the instructions continue on the back of the Recruiting Documen
 For example, if your instructions are `R8, R4, R4, R8`, the first location you visit twice is `4` blocks away, due East.
 
 How many blocks away is the *first location you visit twice*?
-
-Your puzzle answer was `158`.
-
-Both parts of this puzzle are complete! They provide two gold stars: \*\*
-
-At this point, you should [return to your advent calendar](/2016) and try another puzzle.
-
-If you still want to see it, you can [get your puzzle input](1/input).
-
-You can also <span class="share">\[Share<span class="share-content">on [Twitter](https://twitter.com/intent/tweet?text=I%27ve+completed+%22No+Time+for+a+Taxicab%22+%2D+Day+1+%2D+Advent+of+Code+2016&url=http%3A%2F%2Fadventofcode%2Ecom%2F2016%2Fday%2F1&related=ericwastl&hashtags=AdventOfCode) [Google+](https://plus.google.com/share?url=http%3A%2F%2Fadventofcode%2Ecom%2F2016%2Fday%2F1) [Reddit](http://www.reddit.com/submit?url=http%3A%2F%2Fadventofcode%2Ecom%2F2016%2Fday%2F1&title=I%27ve+completed+%22No+Time+for+a+Taxicab%22+%2D+Day+1+%2D+Advent+of+Code+2016)</span>\]</span> this puzzle.
