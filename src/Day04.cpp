@@ -1,7 +1,7 @@
 #include "Solution.hpp"
 #include "io.hpp"
-#include <map>
-#include <set>
+#include <algorithm>
+#include <vector>
 
 template <>
 void
@@ -11,7 +11,7 @@ solve<Day04>(bool part2, std::istream& is, std::ostream& os)
   int sum{0}, sector;
   for (auto& line : io::by<io::line>(is)) {
     auto m = io::regex_parse(line, parse);
-    std::string input{m.str(1)}, check{m.str(3)};
+    std::string input{m.str(1)}, check{m.str(3)}, res;
     sector = std::stoi(m.str(2));
     if (part2) {
       for (char &c : input)
@@ -19,22 +19,17 @@ solve<Day04>(bool part2, std::istream& is, std::ostream& os)
       if (input.find("north") != std::string::npos)
         break;
     } else {
-      std::map<char, int> m;
+      std::vector<std::pair<char, int>> s(26);
+      for(int i{0}; i < 26; ++i)
+        s[i] = {'a' + i, 0};
       for (char c : input)
-        if (c != '-')
-          ++m[c];
-      std::map<int, std::set<char>, std::greater<int>> s;
-      for (auto _ : m)
-        s[std::get<1>(_)].insert(std::get<0>(_));
-      auto find = [&] {
-        std::string c;
-        for (const auto& _ : s)
-          for (const auto& m : std::get<1>(_))
-            if (c += m, c.size() == check.size())
-              return (c == check);
-        return false;
-      };
-      sum += find() * sector;
+        (c != '-') && ++s[c - 'a'].second;
+      std::stable_sort(s.begin(), s.end(), [](auto p1, auto p2) {
+        return p1.second > p2.second;
+      });
+      for (auto& p : s)
+        res += p.first;
+      sum += sector * !res.compare(0, check.size(), check);
     }
   }
   os << (part2 ? sector : sum) << std::endl;
