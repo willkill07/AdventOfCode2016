@@ -6,8 +6,8 @@ set(ADVENT_CXX_FLAGS -Wall -Wextra -Werror -pedantic -pedantic-errors -Wno-gnu-z
 
 project (AdventOfCode2016 CXX)
 
-set(CMAKE_CXX_FLAGS_DEBUG "-g -O0")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -flto")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0 -stdlib=libc++")
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -march=native -flto -stdlib=libc++")
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
