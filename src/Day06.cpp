@@ -1,4 +1,5 @@
 #include "Solution.hpp"
+#include <algorithm>
 #include <array>
 
 template <>
