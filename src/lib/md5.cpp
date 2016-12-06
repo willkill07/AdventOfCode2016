@@ -118,28 +118,20 @@ static void md5_compress(md5sum_t& state, unsigned long nblocks, const void *in)
 }
 
 md5sum_t md5(uint8_t *message, size_t len) {
-  md5sum_t hash;
-	hash[0] = 0x67452301;
-	hash[1] = 0xEFCDAB89;
-	hash[2] = 0x98BADCFE;
-	hash[3] = 0x10325476;
-
-	md5_compress(hash, len/64, message);
-
+  md5sum_t hash {{0x67452301, 0xEFCDAB89, 0x98BADCFE, 0x10325476}};
+	md5_compress(hash, len / 64, message);
 	uint32_t blockbuff[16];
 	uint8_t *byteptr = (uint8_t*)blockbuff;
-
 	int left = len % 64;
 	memcpy(byteptr, message + len-left, left);
-
 	byteptr[left] = 0x80;
 	left++;
 	if (64 - left >= 8)
-		bzero(byteptr + left, 56 - left);
+		memset(byteptr + left, 0, 56 - left);
 	else {
 		memset(byteptr + left, 0, 64 - left);
 		md5_compress(hash, 1, blockbuff);
-		bzero(blockbuff, 56);
+		memset(blockbuff, 0, 56);
 	}
 	blockbuff[14] = (uint32_t)(len << 3);
 	blockbuff[15] = (uint32_t)(len >> 29);
