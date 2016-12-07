@@ -2,11 +2,20 @@
 
 All implementations are written in C++, strictly adhering to C++14 guidelines.
 
+## Prerequisites
+
+* clang (>= 3.6)
+* libc++ (>= 3.6)
+* CMake (>= 3.1)
+* macOS or Linux (only two systems I've tested on)
+
 ## Compiling
 
-* Create a build directory `mkdir build` and navigate to it `cd build`
-* Invoke CMake to initialize the build directory `cmake ..`
-* Invoke make to build `make install && cd ..`
+* A `compile.sh` script is provided
+* Just run it and it should be good to go!
+
+## Running
+
 * Invoke `./Advent` to execute all the days
 * To run a specific day, invoke `./Advent -f <dayXX>`
 * To run a specific part, invoke `./Advent -p <1,2>`
@@ -24,7 +33,6 @@ All implementations are written in C++, strictly adhering to C++14 guidelines.
 
 ## Leaderboard Highlights:
 
-* Day01 -- No placement
 * Day02 -- Part 1: #31  Part 2: #90 (81 pts)
 
 ## Detailed Information
