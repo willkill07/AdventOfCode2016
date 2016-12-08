@@ -6,10 +6,10 @@
 #include <valarray>
 
 const static std::unordered_map<uint, char> OCR {{
-  {0x0C210A4C, 'j'}, {0x1928424C, 'c'}, {0x19285A4E, 'g'}, {0x19294A4C, 'o'}, {0x19297A52, 'a'},
-  {0x1C421084, 't'}, {0x1C42108E, 'i'}, {0x1D08305C, 's'}, {0x2108421E, 'l'}, {0x23151084, 'y'},
-  {0x25294A4C, 'u'}, {0x252F4A52, 'h'}, {0x254C5292, 'k'}, {0x39294A5C, 'd'}, {0x39297210, 'p'},
-  {0x39297292, 'r'}, {0x392E4A5C, 'b'}, {0x3C22221E, 'z'}, {0x3D0E4210, 'f'}, {0x3D0E421E, 'e'}
+  {0x00000000, ' '}, {0x0C210A4C, 'j'}, {0x1928424C, 'c'}, {0x19285A4E, 'g'}, {0x19294A4C, 'o'}, {0x19295A4D, 'q'}, {0x19297A52, 'a'},
+  {0x1C421084, 't'}, {0x1C42108E, 'i'}, {0x1D08305C, 's'}, {0x2108421E, 'l'}, {0x22A22951, 'x'}, {0x23151084, 'y'}, {0x2318A944, 'v'},
+  {0x231AD6AA, 'w'}, {0x23BAC631, 'm'}, {0x252D5A52, 'n'}, {0x25294A4C, 'u'}, {0x252F4A52, 'h'}, {0x254C5292, 'k'}, {0x39294A5C, 'd'},
+  {0x39297210, 'p'}, {0x39297292, 'r'}, {0x392E4A5C, 'b'}, {0x3C22221E, 'z'}, {0x3D0E4210, 'f'}, {0x3D0E421E, 'e'}
 }};
 
 template <>
@@ -35,8 +35,8 @@ solve<Day08>(bool part2, std::istream& is, std::ostream& os)
   if (!part2)
     os << s.sum();
   else
-    for (std::uint32_t i{0}; i < X / W; ++i) {
-      std::uint32_t j{W * Y - 1}, val{0};
+    for (uint i{0}; i < X / W; ++i) {
+      uint j{W * Y - 1}, val{0};
       for (auto v : std::valarray<int>{s[std::gslice{i * W, {Y, W}, {X, 1}}]})
         val |= (v << j--);
       os << OCR.at(val);
