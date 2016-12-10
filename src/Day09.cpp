@@ -4,7 +4,7 @@
 const static std::regex PATTERN{R"(\((\d+)x(\d+)\))", std::regex::optimize};
 
 long
-decode(std::string s, bool part2)
+decode(std::string && s, bool part2)
 {
   std::smatch m;
   if (!std::regex_search(s, m, PATTERN))

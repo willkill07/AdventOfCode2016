@@ -33,7 +33,8 @@ All implementations are written in C++, strictly adhering to C++14 guidelines.
 
 ## Leaderboard Highlights:
 
-* Day02 -- Part 1: #31  Part 2: #90 (81 pts)
+* Day02 -- `Part 1:  #31`  `Part 2:  #90 (81 pts)`
+* Day09 -- `Part 1: #233`  `Part 2:  #66 (35 pts)`
 
 ## Detailed Information
 
