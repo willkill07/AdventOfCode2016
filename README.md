@@ -39,6 +39,8 @@ Day | Part 1 | Part 2 | Points
 09  | 233    | 66     | 35
 10  | 50     | 44     | 108
 11  | 112    | 84     | 17
+12  | 31     | 19     | 152
+--  |        |        | *393*
 
 ## Detailed Information
 
