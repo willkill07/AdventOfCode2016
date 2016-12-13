@@ -1,7 +1,6 @@
 #include "Solution.hpp"
 #include "io.hpp"
 #include <array>
-#include <map>
 #include <set>
 
 using Point = std::array<int, 2>;
@@ -20,17 +19,16 @@ solve<Day13>(bool part2, std::istream& is, std::ostream& os)
   const std::array<Point, 4> DIRS{{{{-1, 0}}, {{1, 0}}, {{0, -1}}, {{0, 1}}}};
   const Point INIT{{1, 1}}, TARGET{{39, 31}};
   auto valid = [NUM](const Point& p) -> bool {
-    return p[0] >= 0 && p[1] >= 0 && !(__builtin_popcount(NUM + p[1] * p[1] + 3 * p[1] + 2 * p[1] * p[0] + p[0] + p[0] * p[0]) & 0x1);
+    return p[1] >= 0 && p[0] >= 0 && !(__builtin_popcount(p[1] * (p[1] + 3) + p[0] * (p[1] + p[1] + p[0] + 1) + NUM) & 0x1);
   };
-  std::set<Point> queue{{INIT}};
-  std::map<Point, int> dist{{INIT, 0}};
-  while (queue.size() != 0 && (part2 || dist.find(TARGET) == dist.end())) {
-    std::set<Point> next;
+  int steps{0};
+  std::set<Point> queue{{INIT}}, seen{queue}, next;
+  while (queue.size() != 0 && (part2 || !seen.count(TARGET)) && (!part2 || steps != LIMIT)) {
     for (const auto& q : queue)
       for (const auto& d : DIRS)
-        if (valid(q + d) && dist.find(q + d) == dist.end() && (!part2 || dist.at(q) < LIMIT))
-          next.insert(q + d), dist.emplace(q + d, dist.at(q) + 1);
-    std::swap(queue, next);
+        if (valid(q + d) && !seen.count(q + d))
+          next.emplace(q + d), seen.emplace(q + d);
+    next.swap(queue), next.clear(), ++steps;
   }
-  os << (part2 ? dist.size() : dist.at(TARGET)) << std::endl;
+  os << (part2 ? seen.size() : steps) << std::endl;
 }
