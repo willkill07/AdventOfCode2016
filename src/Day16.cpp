@@ -7,8 +7,8 @@ solve<Day16>(bool part2, std::istream& is, std::ostream& os)
 {
   uint LIM{part2 ? 35651584U : 272U};
   std::string in;
+  in.reserve(LIM << 1);
   is >> in;
-  in.reserve(LIM << 1); // big buffer
   while (in.size() < LIM) {
     in.push_back('0');
     auto b = in.rbegin();

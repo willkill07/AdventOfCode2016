@@ -7,6 +7,8 @@
 
 namespace util {
 
+int fast_itoa(int, char*);
+
 class combination {
   bool              cont{true};
   std::vector<bool> v;
@@ -31,19 +33,8 @@ class combination {
   }
 };
 
-std::vector<std::string> split(const std::string& text, const std::string& delims)
-{
-  std::vector<std::string> tokens;
-  std::size_t start = text.find_first_not_of(delims), end = 0;
-  while((end = text.find_first_of(delims, start)) != std::string::npos) {
-    if (end != start)
-      tokens.push_back(text.substr(start, end - start));
-    start = text.find_first_not_of(delims, end);
-  }
-  if(start != std::string::npos)
-    tokens.push_back(text.substr(start));
-  return tokens;
-}
+std::vector<std::string>
+split(const std::string& text, const std::string& delims);
 
 constexpr uint64_t
 hash(const char* str, uint64_t ret = 0xCBF29CE484222325ull)
