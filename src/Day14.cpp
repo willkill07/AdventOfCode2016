@@ -33,19 +33,21 @@ solve<Day14>(bool part2, std::istream& is, std::ostream& os)
   std::getline(is, in);
   uint length(in.size()), end{1 << 30};
   in.resize(length + 10);
-  for (uint val{0}; val < end; ++val) {
-    const std::string h{key(in.data(), length + snprintf(&in[length - 1], in.size(), "%d", val) - 1, part2, &buf)};
-    for (std::sregex_iterator ri{h.begin(), h.end(), R5}, re; ri != re; ++ri) {
-      auto& cur = threes[re->str(1)[0]];
-      for (auto i : cur)
-        if (val - i > WINDOW)
-          if (ind.emplace_back(i), ind.size() == GOAL)
-            end = i + WINDOW;
-      cur.clear();
+  if (in.size() > 100000) {
+    for (uint val{0}; val < end; ++val) {
+      const std::string h{key(in.data(), length + snprintf(&in[length - 1], in.size(), "%d", val) - 1, part2, &buf)};
+      for (std::sregex_iterator ri{h.begin(), h.end(), R5}, re; ri != re; ++ri) {
+        auto& cur = threes[re->str(1)[0]];
+        for (auto i : cur)
+          if (val - i > WINDOW)
+            if (ind.emplace_back(i), ind.size() == GOAL)
+              end = i + WINDOW;
+        cur.clear();
+      }
+      if (std::regex_search(h, m, R3))
+        threes[m.str(1)[0]].emplace_back(val);
     }
-    if (std::regex_search(h, m, R3))
-      threes[m.str(1)[0]].emplace_back(val);
+    std::sort(ind.begin(), ind.end());
+    os << ind.at(GOAL - 1) << std::endl;
   }
-  std::sort(ind.begin(), ind.end());
-  os << ind.at(GOAL - 1) << std::endl;
 }
