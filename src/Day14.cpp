@@ -1,49 +1,51 @@
 #include "Solution.hpp"
-#include "md5cpp.hpp"
+#include "md5.hpp"
+#include <algorithm>
 #include <map>
+#include <regex>
+#include <vector>
 
 static std::map<std::string, std::string> memoize;
 
 std::string
-key(const std::string& input, bool part2)
+key(const char* input, size_t len, bool part2, md5str_t* digest)
 {
-  decltype(memoize)::const_iterator it;
-  if ((it = memoize.find(input)) != memoize.end())
-    return it->second;
-  std::string hash{MessageDigest5(input)};
+  md5str((uint8_t*)input, len, digest);
   if (part2)
     for (int i{0}; i < 2016; ++i)
-      hash.assign(MessageDigest5(hash));
-  memoize.emplace(input, hash);
-  return hash;
+      md5str((uint8_t*)digest, 32, digest);
+  return {digest->c[0], digest->c[32]};
 }
+
+const uint       GOAL{64}, WINDOW{1000};
+const std::regex R3{R"((.)\1\1)"};
+const std::regex R5{R"((.)\1\1\1\1)"};
 
 template <>
 void
 solve<Day14>(bool part2, std::istream& is, std::ostream& os)
 {
+  md5str_t buf;
+  std::vector<int> ind;
+  std::map<char, std::vector<int>> threes;
   std::string in;
+  std::smatch m;
   std::getline(is, in);
-  int val{-1}, i{0}, found{0};
-  while (found != 64) {
-    const std::string h1{key(in + std::to_string(++val), part2)};
-    for (i = 0; i < 29; ++i) // match 3
-      if (h1[i] == h1[i + 1] && h1[i] == h1[i + 2])
-        break;
-    if (i >= 29)
-      continue;
-    const char c{h1[i]};
-    for (int off{1}; off <= 1000; ++off) {
-      const std::string h2{key(in + std::to_string(val + off), part2)};
-      for (i = 0; i < 27; ++i) // match 5
-        if (c == h2[i] && c == h2[i + 1] && c == h2[i + 2] && c == h2[i + 3] && c == h2[i + 4])
-          break;
-      if (i < 27) {
-        ++found;
-        break;
-      }
+  uint length(in.size()), end{1 << 30};
+  in.resize(length + 10);
+  for (uint val{0}; val < end; ++val) {
+    const std::string h{key(in.data(), length + snprintf(&in[length - 1], in.size(), "%d", val) - 1, part2, &buf)};
+    for (std::sregex_iterator ri{h.begin(), h.end(), R5}, re; ri != re; ++ri) {
+      auto& cur = threes[re->str(1)[0]];
+      for (auto i : cur)
+        if (val - i > WINDOW)
+          if (ind.emplace_back(i), ind.size() == GOAL)
+            end = i + WINDOW;
+      cur.clear();
     }
+    if (std::regex_search(h, m, R3))
+      threes[m.str(1)[0]].emplace_back(val);
   }
-  memoize.clear();
-  os << --val << std::endl;
+  std::sort(ind.begin(), ind.end());
+  os << ind.at(GOAL - 1) << std::endl;
 }
