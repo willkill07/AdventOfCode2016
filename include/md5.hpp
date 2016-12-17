@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <cinttypes>
+#include <iterator>
 #include <x86intrin.h>
 
 template <typename T, size_t N> using vector = T __attribute__((ext_vector_size(N)));
@@ -55,6 +56,17 @@ union md5str_t {
   v32qi q;
   char c[32];
   __m256i m256i;
+
+  using value_type = char;
+  using size_type = size_t;
+  using iterator = value_type*;
+  using const_iterator = const value_type*;
+
+  constexpr inline size_type size() const { return 32; };
+  constexpr inline iterator begin() { return &c[0]; };
+  constexpr inline iterator end() { return &c[size()]; };
+  constexpr inline const_iterator cbegin() const { return &c[0]; }
+  constexpr inline const_iterator cend() const { return &c[size()]; }
 };
 
 md5sum_t md5 (uint8_t* initial_msg, size_t initial_len);
