@@ -1,22 +1,20 @@
 #include "Solution.hpp"
-#include <algorithm>
-#include <vector>
+
+inline uint8_t
+popcnt128(__int128 val)
+{
+  return __builtin_popcountl(static_cast<uint64_t>(val >> 64)) + __builtin_popcountl(static_cast<uint64_t>(val));
+}
 
 template <>
 void
 solve<Day18>(bool part2, std::istream& is, std::ostream& os)
 {
-  std::vector<uint8_t> a;
-  a.emplace_back(false);
-  std::transform(std::istream_iterator<uint8_t>(is), {}, std::back_inserter(a), [](uint8_t c) { return c == '^'; });
-  a.emplace_back(false);
-  std::vector<uint8_t> b(a.size());
-  uint64_t safe(std::count(a.begin() + 1, a.end() - 1, false)), limit{part2 ? 400000U : 40U};
-  for (uint i{1}; i < limit; ++i) {
-    for (uint j{1}; j < a.size() - 1; ++j)
-      b[j] = a[j - 1] ^ a[j + 1];
-    safe += std::count(b.begin() + 1, b.end() - 1, false);
-    a.swap(b);
-  }
-  os << safe << ' ' << std::endl;
+  __int128 input{0}, mask{0};
+  for (char c; is >> c;)
+    input = (input << 1) | (c == '^'), mask = (mask << 1) | 1;
+  uint64_t count{popcnt128(input)}, limit{part2 ? 400000U : 40U};
+  for (uint64_t itr{1}; itr < limit; ++itr)
+    count += popcnt128(input = ((input >> 1) ^ (input << 1)) & mask);
+  os << ((limit * popcnt128(mask)) - count) << std::endl;
 }
