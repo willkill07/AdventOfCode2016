@@ -1,26 +1,45 @@
 #include "Solution.hpp"
-#include <string>
+#include <sstream>
+
+size_t
+dragon_parity(size_t n)
+{
+  size_t gray{n ^ (n >> 1)};
+  return (gray ^ __builtin_popcountl(n & gray)) & 1;
+}
+
+size_t
+parity(const std::string& input)
+{
+  auto   in{input.data()};
+  size_t input_parity{0};
+  for (size_t i{0}, j = input.size() * 2; i < j; ++in, ++i, --j)
+    input_parity ^= (static_cast<size_t>(*in & 1) << (i + 1)) ^ (static_cast<size_t>((*in & 1) ^ 1) << j);
+  for (size_t i{1}; i < 64; i <<= 1)
+    input_parity ^= input_parity << i;
+  return input_parity;
+}
+
+std::string
+dragon(const std::string& input, size_t disk_size)
+{
+  std::ostringstream num;
+  const size_t LEN{input.size()}, INCR{disk_size & -disk_size};
+  size_t par{parity(input)}, prev{0};
+  for (size_t length{INCR}; length <= disk_size; length += INCR) {
+    size_t dragons{length / (LEN + 1)},
+    p{1 & (dragon_parity(dragons) ^ (((length - dragons) / (LEN << 1)) & LEN) ^ (par >> ((length - dragons) % (LEN << 1))))};
+    num << (p ^ prev ^ 1);
+    prev = p;
+  }
+  return num.str();
+}
 
 template <>
 void
 solve<Day16>(bool part2, std::istream& is, std::ostream& os)
 {
-  uint LIM{part2 ? 35651584U : 272U};
-  std::string in;
-  in.reserve(LIM << 1);
-  is >> in;
-  while (in.size() < LIM) {
-    in.push_back('0');
-    auto b = in.rbegin();
-    while (++b != in.rend())
-      in.push_back(*b ^ 1);
-  }
-  in.resize(LIM);
-  while (!(in.size() & 1)) {
-    auto w = in.begin();
-    for (auto r = in.cbegin(); r != in.cend(); r += 2)
-      *w++ = '0' + (*r == *(r + 1));
-    in.resize(in.size() >> 1);
-  }
-  os << in << std::endl;
+  const size_t LIM{part2 ? 35651584U : 272U};
+  std::string  in{std::istream_iterator<char>(is), {}};
+  os << dragon(in, LIM) << std::endl;
 }
