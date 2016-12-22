@@ -19,9 +19,9 @@ solve<Day05>(bool part2, std::istream& is, std::ostream& os)
       int num{-1}, pos{part2 ? -1 : numDone};
       md5str((uint8_t*)input.data(), length - 1 + util::fast_itoa(groupIdx, &input[length - 1]), &buf);
       if (int{buf.c[0]} + buf.c[1] + buf.c[2] + buf.c[3] + buf.c[4] == 5 * '0') {
-        num = buf.c[5] - '0' + (buf.c[5] >= 'a') * (10 + '0' - 'a'); // digest[5] extraction
+        num = util::htoi(buf.c[5]);
         if (part2) {
-          pos = num, num = buf.c[6] - '0' + (buf.c[6] >= 'a') * (10 + '0' - 'a'); // digest[6] extraction
+          pos = num, num = util::htoi(buf.c[6]);
           if (pos > 7 || password[pos] != '_' || password.find(LOOKUP[num]) != std::string::npos)
             num = -1;
         }

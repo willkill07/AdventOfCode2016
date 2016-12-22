@@ -20,6 +20,8 @@ parallel_do(Fn&& f, Args... args)
     t.join();
 }
 
+int htoi(char);
+
 int
 fast_itoa(int, char*);
 

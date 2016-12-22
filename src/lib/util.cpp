@@ -3,6 +3,12 @@
 namespace util {
 
 int
+htoi(char c)
+{
+  return c - '0' + (c >= 'a') * (10 + '0' - 'a');
+}
+
+int
 fast_itoa(int i, char* b)
 {
   char const digit[] = "0123456789";
