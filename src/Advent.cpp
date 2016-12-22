@@ -47,12 +47,8 @@ main(int argc, char* argv[])
       totalTime += run(day, true, options.time, os);
     }
   }
-  if (options.time == TIME_TOTAL) {
-    std::cout.precision(5);
-    std::cout << "  time: ";
-    std::cout.setf(std::ios::fixed, std::ios::floatfield);
-    std::cout << totalTime << "ms" << std::endl;
-  }
+  if (options.time == TIME_TOTAL)
+    printf("  time: %.5lfms\n", totalTime);
   return EXIT_SUCCESS;
 }
 
@@ -74,10 +70,6 @@ timeSolve(bool part2, bool time, std::ostream& os)
     solve<DAY>(part2, is, os);
   return resTime;
 }
-
-#define LINK_DAY(X) extern template void solve<Day##X>(bool, std::istream&, std::ostream&);
-EVAL(MAP(LINK_DAY, 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25))
-#undef LINK_DAY
 
 #define RUN_DAY(X) \
   case Day##X:     \
@@ -104,8 +96,27 @@ parseArgs(int argc, char* argv[])
                                                        {"time", required_argument, nullptr, 't'},
                                                        {nullptr, 0, nullptr, 0}}};
   int option{0};
-  while (option = getopt_long(argc, argv, shortOpts, longOpts.data(), nullptr), option != -1) {
+  while ((option = getopt_long(argc, argv, shortOpts, longOpts.data(), nullptr)) != -1) {
     switch (option) {
+      case 'p':
+        if (optarg[0] == '1')
+          options.part2 = false;
+        else if (optarg[0] == '2')
+          options.part1 = false;
+        break;
+      case 'f':
+        options.filter = std::regex{optarg};
+        break;
+      case 't': {
+        std::string arg{optarg};
+        const static std::vector<std::string> timeOptStrings{"no", "yes", "total"};
+        long index{std::distance(timeOptStrings.begin(), std::find(timeOptStrings.begin(), timeOptStrings.end(), arg))};
+        if (index != 3) {
+          options.time = static_cast<time_options_t>(index);
+          break;
+        }
+        printf("ERROR: invalid time specified\n");
+      }
       case 'h':
       case '?':
         printf("Advent of Code - 2015\n"
@@ -117,19 +128,6 @@ parseArgs(int argc, char* argv[])
                "\n"
                " Implementation by William Killian (c) 2016\n");
         exit(EXIT_SUCCESS);
-        break;
-      case 'p':
-        if (optarg[0] == '1')
-          options.part2 = false;
-        else if (optarg[0] == '2')
-          options.part1 = false;
-        break;
-      case 'f':
-        options.filter = std::regex{optarg};
-        break;
-      case 't':
-        std::string arg{optarg};
-        options.time = (arg == "no" ? NO_TIME : (arg == "yes" ? TIME_IND : TIME_TOTAL));
         break;
     }
   }
