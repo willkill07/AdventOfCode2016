@@ -1,4 +1,5 @@
 #include "Solution.hpp"
+#include "io.hpp"
 #include "md5.hpp"
 #include "util.hpp"
 #include <algorithm>
@@ -6,7 +7,6 @@
 #include <mutex>
 #include <regex>
 #include <set>
-#include <thread>
 #include <vector>
 
 struct LSet {
@@ -36,30 +36,24 @@ template <>
 void
 solve<Day14>(bool part2, std::istream& is, std::ostream& os)
 {
-  std::vector<std::thread> threads;
   std::array<LSet, 16> l3, l5;
   std::vector<int> ind;
-  std::string      in;
-  is >> in;
-
-  for (uint32_t tid{0}; tid < std::thread::hardware_concurrency(); ++tid)
-    threads.emplace_back([&](uint tid) {
-      std::string input{in};
-      md5str_t    buf;
-      uint32_t    length(input.size());
-      input.resize(length + 10);
-      for (uint val{tid}; val < LIMIT; val += std::thread::hardware_concurrency()) {
-        key(input.data(), length + util::fast_itoa(val, &input[length]), part2, &buf);
-        const std::string h{buf.begin(), buf.end()};
-        for (std::sregex_iterator ri{h.begin(), h.end(), R5}, re{}; ri != re; ++ri)
-          l5[LOOKUP.find(ri->str(1)[0])].put(val);
-        std::smatch m;
-        if (std::regex_search(h, m, R3))
-          l3[LOOKUP.find(m.str(1)[0])].put(val);
-      }
-    }, tid);
-  for (auto& t : threads)
-    t.join();
+  std::string      in{io::as_string(is)};
+  util::parallel_do([&](uint tid, uint N) {
+    std::string input{in};
+    md5str_t    buf;
+    uint32_t    length(input.size());
+    input.reserve(length + 10);
+    for (uint val{tid}; val < LIMIT; val += N) {
+      key(input.data(), length + util::fast_itoa(val, &input[length]), part2, &buf);
+      const std::string h{buf.begin(), buf.end()};
+      for (auto& m : io::by_match(h, R5))
+        l5[LOOKUP.find(m.str(1)[0])].put(val);
+      std::smatch m;
+      if (std::regex_search(h, m, R3))
+        l3[LOOKUP.find(m.str(1)[0])].put(val);
+    }
+  });
   for (int i{0}; i < 16; ++i)
     for (auto i3 : l3[i].v)
       for (auto i5 : l5[i].v)

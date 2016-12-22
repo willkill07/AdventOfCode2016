@@ -3,11 +3,25 @@
 
 #include <algorithm>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace util {
 
-int fast_itoa(int, char*);
+template <typename Fn, typename... Args>
+void
+parallel_do(Fn&& f, Args... args)
+{
+  std::vector<std::thread> threads;
+  const unsigned int       groupSize{std::thread::hardware_concurrency()};
+  for (unsigned int idx{0}; idx < groupSize; ++idx)
+    threads.emplace_back(f, idx, groupSize, args...);
+  for (auto& t : threads)
+    t.join();
+}
+
+int
+fast_itoa(int, char*);
 
 class combination {
   bool              cont{true};
