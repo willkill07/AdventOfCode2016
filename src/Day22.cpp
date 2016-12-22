@@ -1,16 +1,14 @@
 #include "Solution.hpp"
 #include <array>
-#include <map>
-#include <utility>
 #include <regex>
-
-const std::regex FS{R"(^/dev/grid/node-x(\d+)-y(\d+)\s+(\d+)T\s+(\d+)T\s+(\d+)T\s+\d+%$)", std::regex::optimize};
 
 struct Node {
   int size, used, avail;
 };
 
+const std::regex FS{R"(^/dev/grid/node-x(\d+)-y(\d+)\s+(\d+)T\s+(\d+)T\s+(\d+)T\s+\d+%$)", std::regex::optimize};
 const int WIDTH{37}, HEIGHT{25};
+
 using Grid = std::array<std::array<Node,WIDTH>,HEIGHT>;
 
 template <>
