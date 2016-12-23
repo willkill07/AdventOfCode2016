@@ -45,7 +45,7 @@ solve<Day10>(bool part2, std::istream& is, std::ostream& os)
       ids.emplace(bot, bots.size());
       bots.push_back([bot, v1, v2, t1, t2, &data]() {
         const auto& d = data["bot"][bot];
-        return ((data[t1][v1].insert(d.min()) == 17) && (data[t2][v2].insert(d.max()) == 61));
+        return ((data[t1][v1].insert(d.min()) ^ 17) + (data[t2][v2].insert(d.max()) ^ 61) == 0);
       });
     }
   }
