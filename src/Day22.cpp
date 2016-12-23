@@ -6,18 +6,15 @@ struct Node {
   int size, used, avail;
 };
 
-const std::regex FS{R"(^/dev/grid/node-x(\d+)-y(\d+)\s+(\d+)T\s+(\d+)T\s+(\d+)T\s+\d+%$)", std::regex::optimize};
-const int WIDTH{37}, HEIGHT{25};
-
-using Grid = std::array<std::array<Node,WIDTH>,HEIGHT>;
-
 template <>
 void
 solve<Day22>(bool part2, std::istream& is, std::ostream& os)
 {
+  static const int WIDTH{37}, HEIGHT{25};
+  std::array<std::array<Node,WIDTH>,HEIGHT> nodes;
+  static const std::regex FS{R"(^/dev/grid/node-x(\d+)-y(\d+)\s+(\d+)T\s+(\d+)T\s+(\d+)T\s+\d+%$)", std::regex::optimize};
+  int pairs{0}, emptyX{0}, emptyY{0};
   std::smatch match;
-  Grid nodes;
-  int pairs{0},emptyX{0},emptyY{0};
   for (std::string line; std::getline(is, line); )
     if (std::regex_match(line, match, FS))
       nodes[std::stoi(match.str(2))][std::stoi(match.str(1))] = {std::stoi(match.str(3)), std::stoi(match.str(4)), std::stoi(match.str(5))};

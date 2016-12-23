@@ -1,11 +1,10 @@
 #include "Solution.hpp"
 #include "io.hpp"
 
-const static std::regex PATTERN{R"(\((\d+)x(\d+)\))", std::regex::optimize};
-
 long
 decode(std::string && s, bool part2)
 {
+  static const std::regex PATTERN{R"(\((\d+)x(\d+)\))", std::regex::optimize};
   std::smatch m;
   if (!std::regex_search(s, m, PATTERN))
     return s.size();

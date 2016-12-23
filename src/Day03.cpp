@@ -6,15 +6,14 @@
 bool
 isTri(int a, int b, int c)
 {
-  int sum{a + b + c}, max{std::max(a, std::max(b, c))};
-  return sum - max > max;
+  return (a + b + c) > 2 * std::max(a, std::max(b, c));
 }
 
 template <>
 void
 solve<Day03>(bool part2, std::istream& is, std::ostream& os)
 {
-  int num{part2 ? 3 : 1}, sum{0};
+  int num{1 + 2 * part2}, sum{0};
   std::vector<int> tri(3 * num);
   for (std::istream_iterator<int> itr{is}, end{}; itr != end;) {
     for (int& t : tri)

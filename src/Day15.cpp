@@ -10,12 +10,12 @@ union vec {
   vector<T,N> v; T a[N];
 };
 
-const static std::regex PARSE{R"(Disc #\d+ has (\d+) positions; at time=0, it is at position (\d+).)"};
 
 template <>
 void
 solve<Day15>(bool part2, std::istream& is, std::ostream& os)
 {
+  static const std::regex PARSE{R"(Disc #\d+ has (\d+) positions; at time=0, it is at position (\d+).)"};
   vec<uint,8> size = {1}, pos = {0};
   int count{0}, step{0};
   for (std::string line; std::getline(is, line); ++count) {

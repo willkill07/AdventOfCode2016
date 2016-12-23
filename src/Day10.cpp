@@ -22,13 +22,13 @@ public:
   }
 };
 
-const static std::regex VALUE{R"(value (\d+) goes to bot (\d+))"};
-const static std::regex BOT{R"(bot (\d+) gives low to (\w+) (\d+) and high to (\w+) (\d+))"};
 
 template <>
 void
 solve<Day10>(bool part2, std::istream& is, std::ostream& os)
 {
+  static const std::regex VALUE{R"(value (\d+) goes to bot (\d+))"};
+  static const std::regex BOT{R"(bot (\d+) gives low to (\w+) (\d+) and high to (\w+) (\d+))"};
   std::map<std::string, std::map<int, Data>> data;
   std::vector<std::function<bool()>> bots;
   std::map<int, int> ids;
@@ -45,7 +45,7 @@ solve<Day10>(bool part2, std::istream& is, std::ostream& os)
       ids.emplace(bot, bots.size());
       bots.push_back([bot, v1, v2, t1, t2, &data]() {
         const auto& d = data["bot"][bot];
-        return ((data[t1][v1].insert(d.min()) ^ 17) + (data[t2][v2].insert(d.max()) ^ 61) == 0);
+        return ((data[t1][v1].insert(d.min()) == 17) && (data[t2][v2].insert(d.max()) == 61));
       });
     }
   }

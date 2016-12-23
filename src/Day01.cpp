@@ -1,15 +1,16 @@
 #include "Solution.hpp"
 #include <cmath>
 #include <set>
+#include <utility>
 
 template <>
 void
 solve<Day01>(bool part2, std::istream& is, std::ostream& os)
 {
   std::set<std::pair<int, int>> visited;
-  int  index{1}, pos[2]{0, 0}, dist;
+  int  pos[2]{0, 0};
   char d;
-  for (; is >> d >> dist; is.ignore(1, ',')) {
+  for (int index{1}, dist; is >> d >> dist; is.ignore(1, ',')) {
     index += ~d & 3;
     for (int i{0}; i < dist; ++i) {
       pos[index & 1] += 1 - (index & 2);

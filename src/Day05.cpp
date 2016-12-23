@@ -13,12 +13,12 @@ solve<Day05>(bool part2, std::istream& is, std::ostream& os)
   int         numDone{0};
   util::parallel_do([part2, &numDone, &password, &os](int groupIdx, int groupSize, std::string input) {
     md5str_t buf;
-    int      length(input.size());
+    int      length(input.size() - 1), id{groupIdx};
     input.reserve(input.size() + 10);
     while (numDone != 8) {
       int num{-1}, pos{part2 ? -1 : numDone};
-      md5str((uint8_t*)input.data(), length - 1 + util::fast_itoa(groupIdx, &input[length - 1]), &buf);
-      if (int{buf.c[0]} + buf.c[1] + buf.c[2] + buf.c[3] + buf.c[4] == 5 * '0') {
+      md5str((uint8_t*)input.data(), length + util::fast_itoa(id, &input[length]), &buf);
+      if (std::string{buf.begin(), buf.begin() + 5} == "00000") {
         num = util::htoi(buf.c[5]);
         if (part2) {
           pos = num, num = util::htoi(buf.c[6]);
@@ -28,7 +28,7 @@ solve<Day05>(bool part2, std::istream& is, std::ostream& os)
         if (num != -1)
           password[pos] = LOOKUP[num], ++numDone;
       }
-      groupIdx += groupSize;
+      id += groupSize;
     }
   }, input);
   os << password << std::endl;

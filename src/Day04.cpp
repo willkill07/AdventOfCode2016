@@ -7,15 +7,15 @@ template <>
 void
 solve<Day04>(bool part2, std::istream& is, std::ostream& os)
 {
-  std::regex parse{R"(^([a-z-]+)-(\d+)\[([a-z]*)\]$)"};
+  const static std::regex PARSE{R"(^([a-z-]+)-(\d+)\[([a-z]*)\]$)", std::regex::optimize};
   int sum{0}, sector;
   for (auto& line : io::by<io::line>(is)) {
-    auto m = io::regex_parse(line, parse);
+    auto m = io::regex_parse(line, PARSE);
     std::string input{m.str(1)}, check{m.str(3)}, res;
     sector = std::stoi(m.str(2));
     if (part2) {
       for (char &c : input)
-        c = (c=='-') ? c : ((c - 'a' + sector) % 26) + 'a';
+        c = (c == '-') ? c : ((c - 'a' + sector) % 26) + 'a';
       if (input.find("north") != std::string::npos)
         break;
     } else {

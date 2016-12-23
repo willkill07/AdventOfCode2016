@@ -78,7 +78,7 @@ void
 solve<Day11>(bool part2, std::istream &is, std::ostream &os)
 {
   auto GM = [](uint64_t g, uint64_t m) { return uint64_t{1} << (g << 4) << (m << 2); };
-  auto UDGMO = [] (int ud, int gm, int o) { return (ud << 3) | (gm << 2) | o; };
+  auto UDGMO = [](int ud, int gm, int o) { return (ud << 3) | (gm << 2) | o; };
   state_t start(0, 0), goal(0, 3);
   for (const auto &ei : parse_input(is)) {
     std::get<0>(start) += GM(ei.second[0], ei.second[1]);
@@ -89,14 +89,10 @@ solve<Day11>(bool part2, std::istream &is, std::ostream &os)
   memset(move_table, 0x88, sizeof(move_table));
   for (int e{0}; e <= 3; ++e)
     for (int o{0}; o <= 3; ++o) {
-      if (e > 0) {
-        move_table[e][UDGMO(1, 0, o)] = GM(e - 1, o) - GM(e, o);
-        move_table[e][UDGMO(1, 1, o)] = GM(o, e - 1) - GM(o, e);
-      }
-      if (e < 3) {
-        move_table[e][UDGMO(0, 0, o)] = GM(e + 1, o) - GM(e, o);
-        move_table[e][UDGMO(0, 1, o)] = GM(o, e + 1) - GM(o, e);
-      }
+      if (e > 0)
+        move_table[e][UDGMO(1, 0, o)] = GM(e - 1, o) - GM(e, o), move_table[e][UDGMO(1, 1, o)] = GM(o, e - 1) - GM(o, e);
+      if (e < 3)
+        move_table[e][UDGMO(0, 0, o)] = GM(e + 1, o) - GM(e, o), move_table[e][UDGMO(0, 1, o)] = GM(o, e + 1) - GM(o, e);
     }
   os << int{twoWayBFS(start, goal)} << std::endl;
 }

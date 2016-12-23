@@ -14,7 +14,7 @@ solve<Day18>(bool part2, std::istream& is, std::ostream& os)
   for (char c; is >> c;)
     input = (input << 1) | (c == '^'), mask = (mask << 1) | 1;
   uint64_t count{popcnt128(input)}, limit{part2 ? 400000U : 40U};
-  for (uint64_t itr{1}; itr < limit; ++itr)
+  for (uint64_t i{1}; i < limit; ++i)
     count += popcnt128(input = ((input >> 1) ^ (input << 1)) & mask);
   os << ((limit * popcnt128(mask)) - count) << std::endl;
 }
