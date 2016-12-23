@@ -45,7 +45,7 @@ solve<Day14>(bool part2, std::istream& is, std::ostream& os)
     uint32_t    length(input.size());
     input.reserve(length + 10);
     for (uint val{tid}; val < LIMIT; val += N) {
-      key(input.data(), length + util::fast_itoa(val, &input[length]), part2, &buf);
+      key(input.data(), length - 1 + util::fast_itoa(val, &input[length - 1]), part2, &buf);
       const std::string h{buf.begin(), buf.end()};
       for (auto& m : io::by_match(h, R5))
         l5[LOOKUP.find(m.str(1)[0])].put(val);
