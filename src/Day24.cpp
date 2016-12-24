@@ -36,19 +36,23 @@ solve<Day24>(bool part2, std::istream& is, std::ostream& os)
 
   std::map<std::pair<int, int>, int> dist;
   for (int i0{0}; i0 < 8; ++i0)
-    for (int i1{0}; i1 < 8; ++i1)
-      if (i0 != i1 && dist.find({i0, i1}) == dist.end()) {
+    for (int i1{i0 + 1}; i1 < 8; ++i1)
+      if (dist.find({i0, i1}) == dist.end()) {
+        int             steps{1};
         const Point &   START{locsByIndex[i0]}, GOAL{locsByIndex[i1]};
-        int             steps{0};
         std::set<Point> queue{{START}}, seen{queue}, next;
         while (queue.size() != 0 && !seen.count(GOAL)) {
           for (const auto& q : queue)
             for (const auto& d : DIRS) {
               const auto& n{q + d};
-              if (maze[n.first][n.second] != '#' && !seen.count(n))
+              if (maze[n.first][n.second] != '#' && !seen.count(n)) {
+                auto waypnt = locsByPoint.find(n);
+                if (waypnt != locsByPoint.end())
+                  dist[{i0, waypnt->second}] = dist[{waypnt->second, i0}] = steps;
+                if (n == GOAL)
+                  dist[{i0, i1}] = dist[{i1, i0}] = steps;
                 next.emplace(n), seen.emplace(n);
-              if (n == GOAL)
-                dist[{i0, i1}] = dist[{i1, i0}] = steps + 1;
+              }
             }
           next.swap(queue), next.clear(), ++steps;
         }
