@@ -22,7 +22,7 @@ struct LSet {
 
 const std::string LOOKUP{"0123456789abcdef"};
 const std::regex  R3{R"((.)\1\1)", std::regex::optimize}, R5{R"((.)\1\1\1\1)", std::regex::optimize};
-const int         GOAL{64}, WINDOW{1000}, LIMIT{32768};
+const int         GOAL{64}, WINDOW{1000}, LIMIT{25600};
 
 void
 key(const char* input, size_t len, bool part2, md5str_t* digest)
