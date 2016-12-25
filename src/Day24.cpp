@@ -1,13 +1,13 @@
 #include "Solution.hpp"
 #include "io.hpp"
 #include <algorithm>
-#include <array>
 #include <map>
 #include <numeric>
-#include <set>
+#include <vector>
 
+const int WIDTH{181}, HEIGHT{43}, POINTS{8};
 using Point = std::pair<int, int>;
-static const std::array<Point, 4> DIRS{{{0, 1}, {0, -1}, {-1, 0}, {1, 0}}};
+static const Point DIRS[4] = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
 
 Point
 operator+(const Point& p1, const Point& p2)
@@ -19,53 +19,52 @@ template <>
 void
 solve<Day24>(bool part2, std::istream& is, std::ostream& os)
 {
-  std::array<std::array<char, 181>, 43> maze;
+  int   x{0}, y{0};
+  char  maze[HEIGHT][WIDTH];
+  char* data{&maze[0][0]};
   std::map<int, Point> locsByIndex;
   std::map<Point, int> locsByPoint;
-  int   x{0}, y{0};
-  char* data{&maze[0][0]};
   for (char c : io::by<char>(is)) {
     if (c != '.' && c != '#') {
       locsByIndex[c - '0'] = {y, x};
       locsByPoint[{y, x}] = c - '0';
     }
     *data++ = c;
-    if (++x == 181)
+    if (++x == WIDTH)
       x = 0, ++y;
   }
-
-  std::map<std::pair<int, int>, int> dist;
-  for (int i0{0}; i0 < 8; ++i0)
-    for (int i1{i0 + 1}; i1 < 8; ++i1)
-      if (dist.find({i0, i1}) == dist.end()) {
-        int             steps{1};
-        const Point &   START{locsByIndex[i0]}, GOAL{locsByIndex[i1]};
-        std::set<Point> queue{{START}}, seen{queue}, next;
-        while (queue.size() != 0 && !seen.count(GOAL)) {
+  int dist[POINTS][POINTS];
+  bool visited[HEIGHT][WIDTH];
+  std::fill(&dist[0][0], &dist[POINTS][0], -1);
+  std::vector<Point> queue, next;
+  for (int i0{0}; i0 < POINTS; ++i0)
+    for (int i1{i0 + 1}; i1 < POINTS; ++i1)
+      if (dist[i0][i1] == -1) {
+        std::fill(&visited[0][0], &visited[HEIGHT][0], false);
+        const Point &START{locsByIndex[i0]}, GOAL{locsByIndex[i1]};
+        int          steps{1};
+        for (queue.clear(), next.clear(), queue.emplace_back(START);
+             queue.size() != 0 && !visited[GOAL.first][GOAL.second];
+             queue.swap(next), next.clear(), ++steps)
           for (const auto& q : queue)
             for (const auto& d : DIRS) {
               const auto& n{q + d};
-              if (maze[n.first][n.second] != '#' && !seen.count(n)) {
-                auto waypnt = locsByPoint.find(n);
-                if (waypnt != locsByPoint.end())
-                  dist[{i0, waypnt->second}] = dist[{waypnt->second, i0}] = steps;
+              if (maze[n.first][n.second] != '#' && !visited[n.first][n.second]) {
                 if (n == GOAL)
-                  dist[{i0, i1}] = dist[{i1, i0}] = steps;
-                next.emplace(n), seen.emplace(n);
+                  dist[i0][i1] = dist[i1][i0] = steps;
+                next.emplace_back(n), visited[n.first][n.second] = true;
               }
             }
-          next.swap(queue), next.clear(), ++steps;
-        }
       }
-
-  std::array<int, 7> order;
-  std::iota(order.begin(), order.end(), 1);
+  int order[POINTS - 1];
+  std::iota(order, order + sizeof(order), 1);
   int min{INT_MAX};
-  do min = std::min(min, std::accumulate(order.begin(), order.end() - 1,
-             dist[{0, order[0]}] + part2 * dist[{0, order[6]}],
+  do
+    min = std::min(min, std::accumulate(order, order + POINTS - 2,
+             dist[0][order[0]] + part2 * dist[0][order[POINTS - 2]],
              [&](int sum, int& idx) {
-               return sum + dist[{idx, *(&idx + 1)}];
+               return sum + dist[idx][*(&idx + 1)];
              }));
-  while (std::next_permutation(order.begin(), order.end()));
+  while (std::next_permutation(&order[0], &order[POINTS - 1]));
   os << min << std::endl;
 }
