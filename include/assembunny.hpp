@@ -25,21 +25,39 @@ struct Instruction {
 class Assembunny {
   std::map<char, int> regs;
   std::vector<Instruction> ins;
+  std::string out;
+  int outLimit{INT_MAX};
+
   char
   invert(char);
 
   public:
   Assembunny(std::istream& is);
+
   Assembunny&
   optAdd();
+
   Assembunny&
   optMul();
+
   Assembunny&
   run();
+
   int
   get(char);
+
   int&
   ref(char);
+
   Assembunny&
   set(char, int);
+
+  Assembunny&
+  setOutputBufferLimit(int);
+
+  std::string
+  getOuputBuffer();
+
+  Assembunny&
+  clearOutputBuffer();
 };

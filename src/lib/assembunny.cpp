@@ -113,6 +113,10 @@ Assembunny::run()
       case 'a':
         i.reg(1) += i.val(0);
         break;
+      case 'o':
+        out += std::to_string(i.val(0));
+        if (int(out.size()) >= outLimit)
+          pc = ins.size();
       default:
         break;
     }
@@ -136,5 +140,25 @@ Assembunny&
 Assembunny::set(char c, int v)
 {
   ref(c) = v;
+  return *this;
+}
+
+Assembunny&
+Assembunny::setOutputBufferLimit(int outLimit)
+{
+  this->outLimit = outLimit;
+  return *this;
+}
+
+std::string
+Assembunny::getOuputBuffer()
+{
+  return out;
+}
+
+Assembunny&
+Assembunny::clearOutputBuffer()
+{
+  out.clear();
   return *this;
 }
