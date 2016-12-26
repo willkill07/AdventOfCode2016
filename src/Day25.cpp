@@ -10,9 +10,9 @@ solve<Day25>(bool part2, std::istream& is, std::ostream& os)
     os << "Happy Advent of Code 2016!" << std::endl;
     return;
   }
-  static const std::regex ZERO_ONE{R"(^(01)+$)"};
+  static const std::regex ZERO_ONE{R"((01)+$)"};
   Assembunny asmb{is};
-  asmb.optAdd().setOutputBufferLimit(12).set('b', 0).set('c', 0).set('d', 0);
+  asmb.optAdd().setOutputBufferLimit(12);
   for (int a{0}; a < 256; ++a)
     if (std::regex_match(asmb.clearOutputBuffer().set('a', a).run().getOuputBuffer(), ZERO_ONE) && os << a << std::endl)
       return;
