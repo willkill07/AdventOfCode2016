@@ -41,6 +41,9 @@ class Assembunny {
   optMul();
 
   Assembunny&
+  optRemoveInfiniteLoops();
+
+  Assembunny&
   run();
 
   int

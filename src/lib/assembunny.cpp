@@ -67,6 +67,25 @@ Assembunny::optAdd()
   return *this;
 }
 
+Assembunny&
+Assembunny::optRemoveInfiniteLoops()
+{
+  for (int p(ins.size() - 1); p >= 0;) {
+    if (ins[p].c == 'j' && ins[p].p[0].v == 1 && ins[p].p[0].t == Imm && ins[p].val(1) < 0) {
+      int min{p + ins[p].val(1)};
+      bool valid{true};
+      for (int other{min}; other < p; ++other)
+        if (ins[other].c == 'j')
+          valid = valid && ((other + ins[other].val(1)) >= min && (other + ins[other].val(1)) < p);
+      if (valid)
+        ins[p].p[0] = {Imm, 0};
+      p = min;
+    } else
+      --p;
+  }
+  return *this;
+}
+
 char
 Assembunny::invert(char i)
 {
