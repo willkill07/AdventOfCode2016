@@ -13,7 +13,7 @@ solve<Day05>(bool part2, std::istream& is, std::ostream& os)
   int         numDone{0};
   util::parallel_do([part2, &numDone, &password, &os](int groupIdx, int groupSize, std::string input) {
     md5str_t buf;
-    int      length(input.size() - 1), id{groupIdx};
+    int      length(input.size()), id{groupIdx};
     input.reserve(input.size() + 10);
     while (numDone != 8) {
       int num{-1}, pos{part2 ? -1 : numDone};
