@@ -8,19 +8,20 @@
 
 namespace util {
 
-template <typename Fn, typename... Args>
+template <int N = -1, typename Fn, typename... Args>
 void
-parallel_do(Fn&& f, Args... args)
+parallel_do(Fn&& f, Args&&... args)
 {
   std::vector<std::thread> threads;
-  const unsigned int       groupSize{std::thread::hardware_concurrency()};
-  for (unsigned int idx{0}; idx < groupSize; ++idx)
-    threads.emplace_back(f, idx, groupSize, args...);
+  const int groupSize((N == -1) ? std::thread::hardware_concurrency() : N);
+  for (int idx{0}; idx < groupSize; ++idx)
+    threads.emplace_back(f, idx, groupSize, std::forward<Args>(args)...);
   for (auto& t : threads)
     t.join();
 }
 
-int htoi(char);
+int
+htoi(char);
 
 int
 fast_itoa(int, char*);
