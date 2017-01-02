@@ -1,65 +1,60 @@
 #include "Solution.hpp"
-#include "io.hpp"
 #include <map>
-#include <set>
 #include <vector>
 
-class Data {
-  std::set<int> vals{};
-public:
-  int insert(int v) {
-    vals.insert(v);
-    return v;
+struct Data {
+  int  min{INT_MAX}, max{INT_MIN}, size{0};
+  bool vis{false};
+  Data& insert(int v) {
+    if (size == 2)
+      return *this;
+    int& toInsert = (size == 0 || v < min) ? min : max;
+    if (size == 1 && v < min)
+      std::swap(min, max);
+    toInsert = v, ++size;
+    return *this;
+  }
+  Data& visit() {
+    vis = true;
+    return *this;
   }
   bool ready() const {
-    return vals.size() == 2;
-  }
-  int min() const {
-    return *vals.begin();
-  }
-  int max() const {
-    return *vals.rbegin();
+    return size == 2 && !vis;
   }
 };
-
 
 template <>
 void
 solve<Day10>(bool part2, std::istream& is, std::ostream& os)
 {
-  static const std::regex VALUE{R"(value (\d+) goes to bot (\d+))"};
-  static const std::regex BOT{R"(bot (\d+) gives low to (\w+) (\d+) and high to (\w+) (\d+))"};
-  std::map<std::string, std::map<int, Data>> data;
-  std::vector<std::function<bool()>> bots;
+  std::map<char, std::map<int, Data>> data;
+  std::vector<std::function<int()>> bots;
   std::map<int, int> ids;
-  for (const auto& line : io::by<io::line>(is)) {
-    std::smatch m;
-    std::regex_match(line, m, VALUE) || std::regex_match(line, m, BOT);
-    if (line[0] == 'v') {
-      int bot{std::stoi(m.str(2))}, v{std::stoi(m.str(1))};
-      auto& d = data["bot"][bot];
-      d.insert(v);
-    } else {
-      int bot{std::stoi(m.str(1))}, v1{std::stoi(m.str(3))}, v2{std::stoi(m.str(5))};
-      std::string t1{m.str(2)}, t2{m.str(4)};
+  for (std::string line; std::getline(is, line); ) {
+    int bot, v1, v2;
+    char t1, t2;
+    if (sscanf(line.c_str(), "value %d goes to bot %d", &v1, &bot))
+      data['b'][bot].insert(v1);
+    else if (sscanf(line.c_str(), "bot %d gives low to %c%*s %d and high to %c%*s %d", &bot, &t1, &v1, &t2, &v2)) {
       ids.emplace(bot, bots.size());
-      bots.push_back([bot, v1, v2, t1, t2, &data]() {
-        const auto& d = data["bot"][bot];
-        return ((data[t1][v1].insert(d.min()) ^ 17) + (data[t2][v2].insert(d.max()) ^ 61) == 0);
+      bots.push_back([part2, bot, v1, v2, t1, t2, &data, &ids, &bots]() {
+        auto& d = data['b'][bot].visit();
+        int ret{0};
+        if (!part2 && (d.min == 17 && d.max == 61))
+          ret = bot;
+        if (data[t1][v1].insert(d.min).ready() && t1 == 'b')
+          ret += bots[ids[v1]]();
+        if (data[t2][v2].insert(d.max).ready() && t2 == 'b')
+          ret += bots[ids[v2]]();
+        return ret;
       });
     }
   }
-  std::set<int> queue;
-  for (const auto& id : ids)
-    queue.insert(id.first);
-  while (!queue.empty())
-    for (auto q = queue.begin(); q != queue.end();)
-      if (data["bot"][*q].ready()) {
-        if (bots[ids[*q]]() && !part2)
-          os << *q << std::endl;
-        queue.erase(q++);
-      } else
-        ++q;
-  if (part2)
-    os << (data["output"][0].min() * data["output"][1].min() * data["output"][2].min()) << std::endl;
+  for (auto& b : data['b'])
+    if (b.second.ready()) {
+      auto res = bots[ids[b.first]]();
+      auto get = [&data](int i) { return data['o'][i].min; };
+      os << (part2 ? get(0) * get(1) * get(2) : res) << std::endl;
+      return;
+    }
 }
