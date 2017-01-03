@@ -1,5 +1,4 @@
 #include "Solution.hpp"
-#include "io.hpp"
 #include <algorithm>
 #include <vector>
 
@@ -7,12 +6,12 @@ template <>
 void
 solve<Day04>(bool part2, std::istream& is, std::ostream& os)
 {
-  const static std::regex PARSE{R"(^([a-z-]+)-(\d+)\[([a-z]*)\]$)", std::regex::optimize};
   int sum{0}, sector;
-  for (auto& line : io::by<io::line>(is)) {
-    auto m = io::regex_parse(line, PARSE);
-    std::string input{m.str(1)}, check{m.str(3)}, res;
-    sector = std::stoi(m.str(2));
+  for (std::string line; std::getline(is, line); ) {
+    auto numLoc = std::find_if(line.begin(), line.end(), ::isdigit);
+    auto checkLoc = ++std::find(numLoc, line.end(), '[');
+    std::string input{line.begin(), numLoc - 1}, check{checkLoc, checkLoc + 5}, res;
+    sector = ::atoi(&*numLoc);
     if (part2) {
       for (char &c : input)
         c = (c == '-') ? c : ((c - 'a' + sector) % 26) + 'a';
