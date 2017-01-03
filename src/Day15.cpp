@@ -1,32 +1,41 @@
 #include "Solution.hpp"
-#include <regex>
-#include <x86intrin.h>
+#include <numeric>
+#include <vector>
 
-template <typename T, size_t N>
-using vector = T __attribute__((ext_vector_type(N)));
+int
+inv(int a, int m)
+{
+  int u1{1}, u2{0}, u3{a}, v1{0}, v2{0}, v3{m};
+  while (v3 != 0) {
+    int q{u3 / v3};
+    std::tie(v1, v2, v3, u1, u2, u3) = std::make_tuple((u1 - q * v1), (u2 - q * v2), (u3 - q * v3), v1, v2, v3);
+  }
+  return (m + u1) % m;
+}
 
-template <typename T, size_t N>
-union vec {
-  vector<T,N> v; T a[N];
-};
-
+int
+crt(const std::vector<int>& num, const std::vector<int>& rem)
+{
+  int prod{std::accumulate(num.begin(), num.end(), 1, std::multiplies<int>{})}, result{0};
+  for (unsigned int i{0}; i < num.size(); ++i) {
+    int p{prod / num[i]};
+    result += rem[i] * inv(p, num[i]) * p;
+  }
+  return result % prod;
+}
 
 template <>
 void
 solve<Day15>(bool part2, std::istream& is, std::ostream& os)
 {
-  static const std::regex PARSE{R"(Disc #\d+ has (\d+) positions; at time=0, it is at position (\d+).)"};
-  vec<uint,8> size = {1}, pos = {0};
-  int count{0}, step{0};
-  for (std::string line; std::getline(is, line); ++count) {
-    std::smatch m;
-    std::regex_match(line, m, PARSE);
-    size.a[count] = std::stoi(m.str(1));
-    pos.a[count] = (std::stoi(m.str(2)) + count) % size.a[count];
+  int              N{0};
+  std::vector<int> nums, rems;
+  for (std::string line; std::getline(is, line); ++N) {
+    int num, rem;
+    sscanf(line.c_str(), "Disc #%*d has %d positions; at time=0, it is at position %d.", &num, &rem);
+    nums.push_back(num), rems.push_back(num - (rem + N + 1) % num);
   }
   if (part2)
-    size.a[count] = 11, pos.a[count] = count, ++count;
-  for ( ; !_mm256_testz_si256(pos.v, pos.v); ++step)
-    pos.v += 1, pos.v += (pos.v >= size.v) * size.v;
-  os << step << std::endl;
+    nums.push_back(11), rems.push_back(10 - N);
+  os << crt(nums, rems) << std::endl;
 }
