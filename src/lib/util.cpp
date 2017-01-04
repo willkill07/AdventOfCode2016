@@ -8,6 +8,13 @@ htoi(char c)
   return c - '0' + (c >= 'a') * (10 + '0' - 'a');
 }
 
+char
+itoh(int v)
+{
+  char const digit[] = "0123456789abcdef";
+  return digit[v];
+}
+
 int
 fast_itoa(int i, char* b)
 {

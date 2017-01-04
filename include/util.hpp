@@ -23,6 +23,9 @@ parallel_do(Fn&& f, Args&&... args)
 int
 htoi(char);
 
+char
+itoh(int);
+
 int
 fast_itoa(int, char*);
 

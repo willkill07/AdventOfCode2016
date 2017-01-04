@@ -3,33 +3,35 @@
 #include "util.hpp"
 #include <algorithm>
 
-const static std::string LOOKUP{"0123456789abcdef"};
+template <typename T>
+auto
+is_value(T val)
+{
+  return [val](T other) { return other == val; };
+}
 
 template <>
 void
 solve<Day05>(bool part2, std::istream& is, std::ostream& os)
 {
-  std::string password{"________"}, input;
+  const int   SIZE{8};
+  std::string password(SIZE, '_'), in;
   int         numDone{0}, inserted[16];
-  std::getline(is, input);
   std::fill(std::begin(inserted), std::end(inserted), -1);
+  is >> in;
   util::parallel_do([&](int groupIdx, int groupSize, std::string input) {
-    md5str_t buf;
-    int      length(input.size()), id{groupIdx};
+    int length(input.size()), id{groupIdx};
     input.reserve(input.size() + 10);
-    for (; numDone != 8; id += groupSize) {
-      int num{-1}, pos{numDone};
+    md5str_t buf;
+    for (; numDone != SIZE; id += groupSize) {
       md5str((uint8_t*)input.data(), length + util::fast_itoa(id, &input[length]), &buf);
-      if (std::count(buf.cbegin(), buf.cbegin() + 5, '0') != 5)
+      if (!std::all_of(buf.cbegin(), buf.cbegin() + 5, is_value('0')))
         continue;
-      num = util::htoi(buf.c[5]);
-      if (part2) {
-        pos = num, num = util::htoi(buf.c[6]);
-        if (pos > 7 || password[pos] != '_' || inserted[num] != -1)
-          continue;
-      }
-      password[pos] = LOOKUP[num], ++numDone, inserted[num] = pos;
+      int num{util::htoi(buf.c[part2 + 5])}, pos{part2 ? util::htoi(buf.c[5]) : numDone};
+      if (part2 && (pos >= SIZE || password[pos] != '_' || inserted[num] != -1))
+        continue;
+      password[pos] = util::itoh(num), ++numDone, inserted[num] = pos;
     }
-  }, input);
+  }, in);
   os << password << std::endl;
 }
