@@ -1,5 +1,4 @@
 #include "Solution.hpp"
-#include <sstream>
 
 size_t
 dragon_parity(size_t n)
@@ -23,16 +22,16 @@ parity(const std::string& input)
 std::string
 dragon(const std::string& input, size_t disk_size)
 {
-  std::ostringstream num;
+  std::string out;
   const size_t LEN{input.size()}, INCR{disk_size & -disk_size};
   size_t par{parity(input)}, prev{0};
   for (size_t length{INCR}; length <= disk_size; length += INCR) {
     size_t dragons{length / (LEN + 1)},
     p{1 & (dragon_parity(dragons) ^ (((length - dragons) / (LEN << 1)) & LEN) ^ (par >> ((length - dragons) % (LEN << 1))))};
-    num << (p ^ prev ^ 1);
+    out.push_back("10"[p ^ prev]);
     prev = p;
   }
-  return num.str();
+  return out;
 }
 
 template <>
@@ -40,6 +39,7 @@ void
 solve<Day16>(bool part2, std::istream& is, std::ostream& os)
 {
   const size_t LIM{part2 ? 35651584U : 272U};
-  std::string  in{std::istream_iterator<char>(is), {}};
+  std::string in;
+  is >> in;
   os << dragon(in, LIM) << std::endl;
 }
