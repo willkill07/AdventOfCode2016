@@ -1,5 +1,4 @@
 #include "Solution.hpp"
-#include "io.hpp"
 
 long
 decode(std::string::const_iterator s0, std::string::const_iterator s1, bool part2)
@@ -23,6 +22,7 @@ template <>
 void
 solve<Day09>(bool part2, std::istream& is, std::ostream& os)
 {
-  std::string input{io::as_string(is)};
-  os << (decode(input.begin(), input.end(), part2) - 1) << std::endl;
+  std::string input;
+  is >> input;
+  os << decode(input.begin(), input.end(), part2) << std::endl;
 }
